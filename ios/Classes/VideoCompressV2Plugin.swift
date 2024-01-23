@@ -15,7 +15,7 @@ public class VideoCompressV2Plugin: NSObject, FlutterPlugin {
 
       public static func register(with registrar: FlutterPluginRegistrar) {
           let channel = FlutterMethodChannel(name: "video_compress", binaryMessenger: registrar.messenger())
-          let instance = SwiftVideoCompressPlugin(channel: channel)
+          let instance = VideoCompressV2Plugin(channel: channel)
           registrar.addMethodCallDelegate(instance, channel: channel)
       }
 
@@ -188,24 +188,24 @@ public class VideoCompressV2Plugin: NSObject, FlutterPlugin {
           let compressionUrl =
           Utility.getPathUrl("\(Utility.basePath())/\(Utility.getFileName(path))\(uuid.uuidString).\(sourceVideoType)")
 
-          //let timescale = sourceVideoAsset.duration.timescale
-          let timescale = 1000.0
+          let timescale = sourceVideoAsset.duration.timescale
+          //let timescale = 1000.0
           let minStartTime = Double(startTime ?? 0)
 
-          let videoDuration = sourceVideoAsset.duration.seconds*timescale
+          let videoDuration = sourceVideoAsset.duration.seconds
           let minDuration = Double(duration ?? videoDuration)
           let maxDurationTime = minStartTime + minDuration < videoDuration ? minDuration : videoDuration
 
-  //        let cmStartTime = CMTimeMakeWithSeconds(minStartTime, preferredTimescale: timescale)
-  //        let cmDurationTime = CMTimeMakeWithSeconds(maxDurationTime, preferredTimescale: timescale)
+         let cmStartTime = CMTimeMakeWithSeconds(minStartTime, preferredTimescale: timescale)
+          let cmDurationTime = CMTimeMakeWithSeconds(maxDurationTime, preferredTimescale: timescale)
           // Convert CMTime to milliseconds
-          let startTimeMilliseconds = Int64(CMTimeGetSeconds(minStartTime) * timescale)
-          let durationMilliseconds = Int64(CMTimeGetSeconds(maxDurationTime) * timescale)
+//           let startTimeMilliseconds = Int64(CMTimeGetSeconds(minStartTime) * timescale)
+//           let durationMilliseconds = Int64(CMTimeGetSeconds(maxDurationTime) * timescale)
 
-          //let timeRange: CMTimeRange = CMTimeRangeMake(start: cmStartTime,
-          //duration: cmDurationTime)
+          let timeRange: CMTimeRange = CMTimeRangeMake(start: cmStartTime,
+          duration: cmDurationTime)
   // Create a CMTimeRange using milliseconds
-  let timeRange: CMTimeRange = CMTimeRangeMake(start: CMTimeMake(value: startTimeMilliseconds, timescale: timescale), duration: CMTimeMake(value: durationMilliseconds, timescale: timescale))
+  //let timeRange: CMTimeRange = CMTimeRangeMake(start: CMTimeMake(value: startTimeMilliseconds, timescale: timescale), duration: CMTimeMake(value: durationMilliseconds, timescale: timescale))
 
 
           let isIncludeAudio = includeAudio != nil ? includeAudio! : true
