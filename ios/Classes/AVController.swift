@@ -6,7 +6,7 @@ class AvController: NSObject {
     public func getVideoAsset(_ url:URL)->AVURLAsset {
         return AVURLAsset(url: url)
     }
-    
+
     public func getTrack(_ asset: AVURLAsset)->AVAssetTrack? {
         var track : AVAssetTrack? = nil
         let group = DispatchGroup()
@@ -22,7 +22,7 @@ class AvController: NSObject {
         group.wait()
         return track
     }
-    
+
     public func getVideoOrientation(_ path:String)-> Int? {
         let url = Utility.getPathUrl(path)
         let asset = getVideoAsset(url)
@@ -41,7 +41,7 @@ class AvController: NSObject {
             return 270
         }
     }
-    
+
     public func getMetaDataByTag(_ asset:AVAsset,key:String)->String {
         for item in asset.commonMetadata {
             if item.commonKey?.rawValue == key {
