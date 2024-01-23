@@ -60,7 +60,7 @@ extension Compress on IVideoCompress {
     return await _invoke<Uint8List>('getByteThumbnail', {
       'path': path,
       'quality': quality,
-      'position': position,
+      'position': position == 0 ? -1 : position,
     });
   }
 
@@ -79,7 +79,7 @@ extension Compress on IVideoCompress {
     final filePath = await (_invoke<String>('getFileThumbnail', {
       'path': path,
       'quality': quality,
-      'position': position,
+      'position': position == 0 ? -1 : position,
     }));
 
     final file = File(Uri.decodeFull(filePath!));
