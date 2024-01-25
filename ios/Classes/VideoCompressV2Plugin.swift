@@ -190,12 +190,12 @@ public class VideoCompressV2Plugin: NSObject, FlutterPlugin {
         let timescale = sourceVideoAsset.duration.timescale
         let minStartTime = Double(startTime ?? 0)
 
-        let videoDuration = sourceVideoAsset.duration.seconds
+        let videoDuration = sourceVideoAsset.duration.seconds * 1000
         let minDuration = Double(duration ?? videoDuration)
         let maxDurationTime = minStartTime + minDuration < videoDuration ? minDuration : videoDuration
 
-        let cmStartTime = CMTimeMakeWithSeconds(minStartTime, preferredTimescale: timescale)
-        let cmDurationTime = CMTimeMakeWithSeconds(maxDurationTime, preferredTimescale: timescale)
+        let cmStartTime = CMTimeMakeWithSeconds(Double(minStartTime) / 1000.0, preferredTimescale: timescale)
+        let cmDurationTime = CMTimeMakeWithSeconds(Double(maxDurationTime) / 1000.0, preferredTimescale: timescale)
         let timeRange: CMTimeRange = CMTimeRangeMake(start: cmStartTime, duration: cmDurationTime)
 
         let isIncludeAudio = includeAudio != nil ? includeAudio! : true
@@ -207,6 +207,7 @@ public class VideoCompressV2Plugin: NSObject, FlutterPlugin {
         exporter.outputURL = compressionUrl
         exporter.outputFileType = AVFileType.mp4
         exporter.shouldOptimizeForNetworkUse = true
+        exporter.timeRange = timeRange
 
         if frameRate != nil {
             let videoComposition = AVMutableVideoComposition(propertiesOf: sourceVideoAsset)
@@ -214,10 +215,7 @@ public class VideoCompressV2Plugin: NSObject, FlutterPlugin {
             exporter.videoComposition = videoComposition
         }
 
-        if !isIncludeAudio {
-            exporter.timeRange = timeRange
-        }
-
+    
         Utility.deleteFile(compressionUrl.absoluteString)
 
         let timer = Timer.scheduledTimer(timeInterval: 0.1, target: self, selector: #selector(self.updateProgress),
