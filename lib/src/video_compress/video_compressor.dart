@@ -53,7 +53,7 @@ extension Compress on IVideoCompress {
   Future<Uint8List?> getByteThumbnail(
     String path, {
     int quality = 100,
-    int position = -1,
+    int position = 0,
   }) async {
     assert(quality > 1 || quality < 100);
 
@@ -70,7 +70,7 @@ extension Compress on IVideoCompress {
   Future<File> getFileThumbnail(
     String path, {
     int quality = 100,
-    int position = -1,
+    int position = 0,
   }) async {
     assert(quality > 1 || quality < 100);
 
