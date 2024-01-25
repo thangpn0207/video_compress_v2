@@ -55,7 +55,9 @@ public class VideoCompressV2Plugin: NSObject, FlutterPlugin {
             result(FlutterMethodNotImplemented)
         }
     }
-
+    private func CMTimeMakeWithMilliseconds(_ value: Int64, timeScale: Int32) -> CMTime {
+        return CMTimeMake(value: value, timescale: timeScale)
+    }
     private func getBitMap(_ path: String,_ quality: NSNumber,_ position: NSNumber,_ result: FlutterResult)-> Data?  {
         let url = Utility.getPathUrl(path)
         let asset = avController.getVideoAsset(url)
@@ -65,7 +67,7 @@ public class VideoCompressV2Plugin: NSObject, FlutterPlugin {
         assetImgGenerate.appliesPreferredTrackTransform = true
 
         let timeScale = asset.duration.timescale
-        let time = CMTimeMakeWithSeconds(Double(truncating: position)/1000.0,preferredTimescale:timeScale)
+        let time = CMTimeMakeWithMilliseconds( Int64(truncating: position), timeScale: timeScale)
         guard let img = try? assetImgGenerate.copyCGImage(at:time, actualTime: nil) else {
             return nil
         }
