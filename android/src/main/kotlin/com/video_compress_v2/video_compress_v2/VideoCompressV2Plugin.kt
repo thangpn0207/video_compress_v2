@@ -103,7 +103,7 @@ class VideoCompressV2Plugin: FlutterPlugin, MethodCallHandler {
 
             assert(value = frameRate != null)
             videoTrackStrategy = DefaultVideoStrategy.Builder()
-              .keyFrameInterval(5f)
+              .keyFrameInterval(3f)
               .bitRate(1280 * 720 * 4.toLong())
               .frameRate(frameRate!!) // will be capped to the input frameRate
               .build()
@@ -143,7 +143,7 @@ class VideoCompressV2Plugin: FlutterPlugin, MethodCallHandler {
         }
 
 
-        transcodeFuture = Transcoder.into(destPath!!)
+        transcodeFuture = Transcoder.into(destPath)
           .addDataSource(dataSource)
           .setAudioTrackStrategy(audioTrackStrategy)
           .setVideoTrackStrategy(videoTrackStrategy)

@@ -26,7 +26,7 @@ class CompressMixin {
     switch (call.method) {
       case 'updateProgress':
         final progress = double.tryParse(call.arguments.toString());
-        if (progress != null) compressProgress$.next(progress);
+        if (progress != null) compressProgress$.next(progress * 0.5);
         break;
     }
   }

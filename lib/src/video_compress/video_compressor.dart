@@ -4,6 +4,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:lat_hdr_transcoder_v2/lat_hdr_transcoder_v2.dart';
 import 'package:video_compress_v2/src/progress_callback/compress_mixin.dart';
 import 'package:video_compress_v2/video_compress.dart';
 
@@ -15,6 +16,7 @@ class _VideoCompressImpl extends IVideoCompress {
   }
 
   static _VideoCompressImpl? _instance;
+  static final LatHdrTranscoderV2 latHdrTranscoderV2 = LatHdrTranscoderV2();
 
   static _VideoCompressImpl get instance {
     return _instance ??= _VideoCompressImpl._();
@@ -27,6 +29,7 @@ class _VideoCompressImpl extends IVideoCompress {
 
 // ignore: non_constant_identifier_names
 IVideoCompress get VideoCompressV2 => _VideoCompressImpl.instance;
+//LatHdrTranscoderV2 get LatHdrTranscoderV2 => _VideoCompressImpl.latHdrTranscoderV2;
 
 extension Compress on IVideoCompress {
   void dispose() {
@@ -128,6 +131,7 @@ extension Compress on IVideoCompress {
     bool? includeAudio,
     int frameRate = 30,
   }) async {
+    String inputPath = path;
     if (isCompressing) {
       throw StateError('''VideoCompress Error: 
       Method: compressVideo
@@ -138,11 +142,17 @@ extension Compress on IVideoCompress {
       debugPrint('''VideoCompress: You can try to subscribe to the 
       compressProgress\$ stream to know the compressing state.''');
     }
-
+    final bool isHdrVideo = (await isHdr(inputPath)) ?? true;
+    if (isHdrVideo && Platform.isAndroid) {
+      final String? sdrVideoPath = await transcoding(inputPath);
+      if (sdrVideoPath?.isNotEmpty ?? false) {
+        inputPath = sdrVideoPath!;
+      }
+    }
     // ignore: invalid_use_of_protected_member
     setProcessingStatus(true);
     final jsonStr = await _invoke<String>('compressVideo', {
-      'path': path,
+      'path': inputPath,
       'quality': quality.index,
       'deleteOrigin': deleteOrigin,
       'startTime': startTime,
@@ -171,6 +181,7 @@ extension Compress on IVideoCompress {
   /// delete the cache folder, please do not put other things
   /// in the folder of this plugin, it will be cleared
   Future<bool?> deleteAllCache() async {
+    await _VideoCompressImpl.latHdrTranscoderV2.cleanCache();
     return await _invoke<bool>('deleteAllCache');
   }
 
@@ -178,5 +189,17 @@ extension Compress on IVideoCompress {
     return await _invoke<void>('setLogLevel', {
       'logLevel': logLevel,
     });
+  }
+
+  Future<bool?> isHdr(String path) async {
+    return _VideoCompressImpl.latHdrTranscoderV2.isHdr(path);
+  }
+
+  Future<String?> transcoding(String path) async {
+    return _VideoCompressImpl.latHdrTranscoderV2.transcoding(path);
+  }
+
+  Stream<double> streamConvertHdr() {
+    return _VideoCompressImpl.latHdrTranscoderV2.onProgress();
   }
 }
