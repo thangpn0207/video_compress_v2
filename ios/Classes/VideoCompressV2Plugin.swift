@@ -67,10 +67,11 @@ public class VideoCompressV2Plugin: NSObject, FlutterPlugin {
         assetImgGenerate.appliesPreferredTrackTransform = true
 
         let timeScale = asset.duration.timescale
-        let time = CMTimeMakeWithMilliseconds( Int64(truncating: position), timeScale: timeScale)
+        let time = CMTimeMakeWithSeconds(Float64(Int(truncating: position)/1000), preferredTimescale:timeScale)
         guard let img = try? assetImgGenerate.copyCGImage(at:time, actualTime: nil) else {
             return nil
         }
+        
         let thumbnail = UIImage(cgImage: img)
         let compressionQuality = CGFloat(0.01 * Double(truncating: quality))
         return thumbnail.jpegData(compressionQuality: compressionQuality)
