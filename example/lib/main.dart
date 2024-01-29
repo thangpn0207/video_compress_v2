@@ -51,7 +51,7 @@ class _MyHomePageState extends State<MyHomePage> {
     await VideoCompressV2.setLogLevel(0);
     final info = await VideoCompressV2.compressVideo(
       file.path,
-      quality: VideoQuality.MediumQuality,
+      quality: VideoQuality.Res1280x720Quality,
       deleteOrigin: false,
       includeAudio: true,
     );

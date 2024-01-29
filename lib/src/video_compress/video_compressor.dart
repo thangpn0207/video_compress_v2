@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -142,11 +143,16 @@ extension Compress on IVideoCompress {
       debugPrint('''VideoCompress: You can try to subscribe to the 
       compressProgress\$ stream to know the compressing state.''');
     }
+
     final bool isHdrVideo = (await isHdr(inputPath)) ?? true;
     if (isHdrVideo && Platform.isAndroid) {
-      final String? sdrVideoPath = await transcoding(inputPath);
-      if (sdrVideoPath?.isNotEmpty ?? false) {
-        inputPath = sdrVideoPath!;
+      try {
+        final String? sdrVideoPath = await transcoding(inputPath);
+        if (sdrVideoPath?.isNotEmpty ?? false) {
+          inputPath = sdrVideoPath!;
+        }
+      } catch (e) {
+        log(e.toString());
       }
     }
     // ignore: invalid_use_of_protected_member
