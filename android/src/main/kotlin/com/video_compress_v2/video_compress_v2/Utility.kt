@@ -77,12 +77,28 @@ class Utility(private val channelName: String) {
         return json
     }
 
+     private fun setDataSource(videoPath: String, retriever:MediaMetadataRetriever  ) {
+
+        val path: String = if (videoPath.startsWith("/")) {
+            videoPath
+        } else if (videoPath.startsWith("file://")) {
+            videoPath.substring(7)
+        } else {
+            retriever.setDataSource(videoPath)
+            return
+        }
+
+        val videoFile = File(path)
+        val inputStream = FileInputStream(videoFile.absolutePath)
+        retriever.setDataSource(inputStream.fd)
+    }
+
     fun getBitmap(path: String, position: Long, result: MethodChannel.Result): Bitmap {
         var bitmap: Bitmap? = null
         val retriever = MediaMetadataRetriever()
 
         try {
-            retriever.setDataSource(path)
+            setDataSource(path,retriever )
             bitmap = retriever.getFrameAtTime(position, MediaMetadataRetriever.OPTION_CLOSEST_SYNC)
         } catch (ex: IllegalArgumentException) {
             result.error(channelName, "Assume this is a corrupt video file", null)
