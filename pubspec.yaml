@@ -1,7 +1,7 @@
 name: video_compress_v2
-description: "A new Flutter video compress."
+description: "A new Flutter video compress, support HDR convert to SDR"
 version: 1.0.0+1
-homepage:
+homepage: https://github.com/thangpn0207/video_compress_v2.git
 
 environment:
   sdk: '>=3.2.3 <4.0.0'

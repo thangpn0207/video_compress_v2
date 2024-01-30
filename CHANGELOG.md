@@ -1,3 +1,9 @@
+## 1.0.0+1
+
+* Add convert HDR to SDR
+* Fix source file thumbnail
+* Update Position thumbnail IOS
+
 ## 0.0.1
 
-* TODO: Describe initial release.
+*  Describe initial release.
