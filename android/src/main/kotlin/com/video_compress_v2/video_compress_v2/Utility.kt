@@ -8,11 +8,13 @@ import android.os.Build
 import io.flutter.plugin.common.MethodChannel
 import org.json.JSONObject
 import java.io.File
+import java.io.FileInputStream
+import kotlin.math.max
 
 
 class Utility(private val channelName: String) {
 
-    fun isLandscapeImage(orientation: Int) = orientation != 90 && orientation != 270
+    private fun isLandscapeImage(orientation: Int) = orientation != 90 && orientation != 270
 
     fun deleteFile(file: File) {
         if (file.exists()) {
@@ -47,11 +49,8 @@ class Utility(private val channelName: String) {
         var width = java.lang.Long.parseLong(widthStr?:"0")
         var height = java.lang.Long.parseLong(heightStr?:"0")
         val filesize = file.length()
-        val orientation = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+        val orientation =
             retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_ROTATION)
-        } else {
-            null
-        }
         val ori = orientation?.toIntOrNull()
         if (ori != null && isLandscapeImage(ori)) {
             val tmp = width
@@ -116,7 +115,7 @@ class Utility(private val channelName: String) {
 
         val width = bitmap!!.width
         val height = bitmap.height
-        val max = Math.max(width, height)
+        val max = max(width, height)
         if (max > 512) {
             val scale = 512f / max
             val w = Math.round(scale * width)
