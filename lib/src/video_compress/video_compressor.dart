@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:lat_hdr_transcoder_v2/lat_hdr_transcoder_v2.dart';
 import 'package:video_compress_v2/src/progress_callback/compress_mixin.dart';
-import 'package:video_compress_v2/video_compress.dart';
+import 'package:video_compress_v2/video_compress_v2.dart';
 
 abstract class IVideoCompress extends CompressMixin {}
 
